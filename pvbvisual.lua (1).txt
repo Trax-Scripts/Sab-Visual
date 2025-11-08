@@ -1,0 +1,244 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = false
+
+-- Create main background frame
+local backgroundFrame = Instance.new("Frame")
+backgroundFrame.Size = UDim2.new(0, 320, 0, 240)
+backgroundFrame.Position = UDim2.new(0.5, -160, 0.5, -120)
+backgroundFrame.BackgroundColor3 = Color3.fromRGB(20, 25, 30)
+backgroundFrame.BorderSizePixel = 0
+backgroundFrame.Parent = screenGui
+
+-- Add rounded corners to main frame
+local bgCorner = Instance.new("UICorner")
+bgCorner.CornerRadius = UDim.new(0, 20)
+bgCorner.Parent = backgroundFrame
+
+-- Header section
+local headerFrame = Instance.new("Frame")
+headerFrame.Size = UDim2.new(1, 0, 0, 80)
+headerFrame.Position = UDim2.new(0, 0, 0, 0)
+headerFrame.BackgroundTransparency = 1
+headerFrame.Parent = backgroundFrame
+
+-- Icon/Logo Frame
+local iconFrame = Instance.new("Frame")
+iconFrame.Size = UDim2.new(0, 50, 0, 50)
+iconFrame.Position = UDim2.new(0, 15, 0, 10)
+iconFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 40)
+iconFrame.BorderSizePixel = 0
+iconFrame.Parent = headerFrame
+
+-- Rounded corners for icon
+local iconCorner = Instance.new("UICorner")
+iconCorner.CornerRadius = UDim.new(0, 12)
+iconCorner.Parent = iconFrame
+
+-- Icon Image (Replace with your image URL)
+local iconImage = Instance.new("ImageLabel")
+iconImage.Size = UDim2.new(0.7, 0, 0.7, 0)
+iconImage.Position = UDim2.new(0.15, 0, 0.15, 0)
+iconImage.BackgroundTransparency = 1
+iconImage.Image = "rbxassetid://86273900162466" -- Replace with your image asset ID
+iconImage.ScaleType = Enum.ScaleType.Fit
+iconImage.Parent = iconFrame
+
+-- Title section
+local titleFrame = Instance.new("Frame")
+titleFrame.Size = UDim2.new(1, -80, 0, 60)
+titleFrame.Position = UDim2.new(0, 75, 0, 10)
+titleFrame.BackgroundTransparency = 1
+titleFrame.Parent = headerFrame
+
+-- Title
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 25)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Dupe"
+titleLabel.TextColor3 = Color3.fromRGB(138, 120, 255)
+titleLabel.TextSize = 24
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleFrame
+
+-- Subtitle
+local subtitleLabel = Instance.new("TextLabel")
+subtitleLabel.Size = UDim2.new(1, 0, 0, 18)
+subtitleLabel.Position = UDim2.new(0, 0, 0, 28)
+subtitleLabel.BackgroundTransparency = 1
+subtitleLabel.Text = "Plants Vs Brainrots Duper"
+subtitleLabel.TextColor3 = Color3.fromRGB(150, 150, 160)
+subtitleLabel.TextSize = 13
+subtitleLabel.Font = Enum.Font.Gotham
+subtitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+subtitleLabel.Parent = titleFrame
+
+-- Status Label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, 0, 0, 18)
+statusLabel.Position = UDim2.new(0, 0, 0, 48)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: Ready"
+statusLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+statusLabel.TextSize = 13
+statusLabel.Font = Enum.Font.GothamMedium
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Parent = titleFrame
+
+-- How to Use section
+local howToFrame = Instance.new("Frame")
+howToFrame.Size = UDim2.new(1, -30, 0, 65)
+howToFrame.Position = UDim2.new(0, 15, 0, 75)
+howToFrame.BackgroundColor3 = Color3.fromRGB(25, 30, 35)
+howToFrame.BorderSizePixel = 0
+howToFrame.Parent = backgroundFrame
+
+-- Rounded corners for how to section
+local howToCorner = Instance.new("UICorner")
+howToCorner.CornerRadius = UDim.new(0, 12)
+howToCorner.Parent = howToFrame
+
+-- How to Use title
+local howToTitle = Instance.new("TextLabel")
+howToTitle.Size = UDim2.new(1, -20, 0, 20)
+howToTitle.Position = UDim2.new(0, 10, 0, 6)
+howToTitle.BackgroundTransparency = 1
+howToTitle.Text = "How to Use"
+howToTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+howToTitle.TextSize = 14
+howToTitle.Font = Enum.Font.GothamBold
+howToTitle.TextXAlignment = Enum.TextXAlignment.Left
+howToTitle.Parent = howToFrame
+
+-- How to Use description
+local howToDesc = Instance.new("TextLabel")
+howToDesc.Size = UDim2.new(1, -20, 0, 35)
+howToDesc.Position = UDim2.new(0, 10, 0, 26)
+howToDesc.BackgroundTransparency = 1
+howToDesc.Text = "Click 'Start Duplication' then hold your item and place it in another plot to duplicate"
+howToDesc.TextColor3 = Color3.fromRGB(170, 170, 180)
+howToDesc.TextSize = 11
+howToDesc.Font = Enum.Font.Gotham
+howToDesc.TextXAlignment = Enum.TextXAlignment.Left
+howToDesc.TextWrapped = true
+howToDesc.TextYAlignment = Enum.TextYAlignment.Top
+howToDesc.Parent = howToFrame
+
+-- Start Duplication Button
+local dupeButton = Instance.new("TextButton")
+dupeButton.Size = UDim2.new(1, -30, 0, 45)
+dupeButton.Position = UDim2.new(0, 15, 1, -90)
+dupeButton.BackgroundColor3 = Color3.fromRGB(35, 40, 45)
+dupeButton.BorderSizePixel = 0
+dupeButton.Text = "Start Duplication"
+dupeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+dupeButton.TextSize = 14
+dupeButton.Font = Enum.Font.GothamBold
+dupeButton.AutoButtonColor = false
+dupeButton.Parent = backgroundFrame
+
+-- Rounded corners for button
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 12)
+buttonCorner.Parent = dupeButton
+
+-- Credits Label
+local creditsLabel = Instance.new("TextLabel")
+creditsLabel.Size = UDim2.new(1, 0, 0, 20)
+creditsLabel.Position = UDim2.new(0, 0, 1, -35)
+creditsLabel.BackgroundTransparency = 1
+creditsLabel.Text = "Made by: dino_skill"
+creditsLabel.TextColor3 = Color3.fromRGB(120, 120, 130)
+creditsLabel.TextSize = 11
+creditsLabel.Font = Enum.Font.Gotham
+creditsLabel.TextXAlignment = Enum.TextXAlignment.Center
+creditsLabel.Parent = backgroundFrame
+
+-- Button hover effect
+dupeButton.MouseEnter:Connect(function()
+    dupeButton.BackgroundColor3 = Color3.fromRGB(45, 50, 55)
+end)
+
+dupeButton.MouseLeave:Connect(function()
+    dupeButton.BackgroundColor3 = Color3.fromRGB(35, 40, 45)
+end)
+
+-- Function when button is clicked
+local function onButtonClicked()
+    local player = game.Players.LocalPlayer
+    local tool = player.Character and player.Character:FindFirstChildOfClass("Tool")
+
+    if tool then
+        -- Visual feedback
+        dupeButton.BackgroundColor3 = Color3.fromRGB(40, 120, 80)
+        dupeButton.Text = "✓ Duplicated Successfully!"
+        statusLabel.Text = "Status: Duplicated - " .. tool.Name
+        statusLabel.TextColor3 = Color3.fromRGB(100, 255, 150)
+        
+        -- Duplicate the item
+        local clone = tool:Clone()
+        clone.Parent = player.Backpack
+        
+        -- Reset button after delay
+        wait(2)
+        dupeButton.BackgroundColor3 = Color3.fromRGB(35, 40, 45)
+        dupeButton.Text = "Start Duplication"
+        statusLabel.Text = "Status: Ready"
+        statusLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+    else
+        -- No tool equipped feedback
+        dupeButton.BackgroundColor3 = Color3.fromRGB(120, 40, 40)
+        dupeButton.Text = "✗ No Item Equipped!"
+        statusLabel.Text = "Status: Error - Equip an item first"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        
+        wait(2)
+        dupeButton.BackgroundColor3 = Color3.fromRGB(35, 40, 45)
+        dupeButton.Text = "Start Duplication"
+        statusLabel.Text = "Status: Ready"
+        statusLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+    end
+end
+
+-- Connect button click
+dupeButton.MouseButton1Click:Connect(onButtonClicked)
+
+-- Make frame draggable
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    backgroundFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+backgroundFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = backgroundFrame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+backgroundFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
