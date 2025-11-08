@@ -1,0 +1,562 @@
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local Players = game:GetService('Players')
+local UserInputService = game:GetService('UserInputService')
+local TweenService = game:GetService('TweenService')
+
+local LocalPlayer = Players.LocalPlayer
+local spawnedPodiums = {}
+
+-- Brainrot animals database with cost and income
+local brainrotDatabase = {
+    {name = "La Vacca Saturno Saturnita", cost = "$50M", income = "$250K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Sammyini Spyderini", cost = "$100M", income = "$325K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Chimpanzini Spiderini", cost = "$100M", income = "$325K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Los Matteos", cost = "$100M", income = "$300K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Torrtuginni Dragonfruitini (Lucky Block)", cost = "$500M", income = "$350K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Dul Dul Dul", cost = "$150M", income = "$375K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Blackhole Goat", cost = "$75M", income = "$400K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Agarrini la Palini", cost = "$80M", income = "$425K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Los Tralaleritos", cost = "$150M", income = "$500K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Las Tralaleritas", cost = "$150M", income = "$650K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Las Vaquitas Saturnitas", cost = "$160M", income = "$750K/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Graipuss Medussi", cost = "$250M", income = "$1M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Nooo My Hotspot (Taco)", cost = "$500M", income = "$1.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "La Sahur Combinasion", cost = "$550M", income = "$2M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Karkerkar Kurkur (Admin)", cost = "$100M", income = "$2.4M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Pot Hotspot (Lucky Block)", cost = "$500M", income = "$2.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Quesadilla Crocodila", cost = "$700M", income = "$3M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Chicleteira Bicicleteira", cost = "$750M", income = "$3.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Los Noo My Hotspotsitos", cost = "$1B", income = "$5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "67", cost = "$1.2B", income = "$7.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "La Grande Combinasion", cost = "$1B", income = "$10M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Nuclearo Dinossauro", cost = "$2.5B", income = "$15M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Los Combinasionas", cost = "$2B", income = "$15M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Las Sis", cost = "$2.5B", income = "$17.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Los Hotspotsitos", cost = "$300M", income = "$20M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Celularcini Viciosini", cost = "$2.7B", income = "$22.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Tralaledon", cost = "$3B", income = "$27.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Esok Sekolah (Lucky Block)", cost = "$750M", income = "$30M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Ketupat Kepat", cost = "$5B", income = "$35M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "La Supreme Combinasion", cost = "$7B", income = "$40M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Ketchuru and Masturu", cost = "$7.5B", income = "$42.5M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Garama and Madundung", cost = "$10B", income = "$50M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Spaghetti Tualetti", cost = "$750M", income = "$60M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Dragon Cannelloni", cost = "$100B", income = "$100M/s", rarity = "SECRET", color = Color3.fromRGB(50, 50, 60)},
+    {name = "Strawberry Elephant", cost = "$500B", income = "$250M/s", rarity = "OG", color = Color3.fromRGB(255, 215, 0)},
+}
+
+local function findPlayerBase()
+    local plots = workspace:FindFirstChild('Plots')
+    if not plots then
+        return nil
+    end
+
+    for _, plot in pairs(plots:GetChildren()) do
+        if plot:IsA('Model') then
+            local plotSign = plot:FindFirstChild('PlotSign')
+            if plotSign then
+                local yourBase = plotSign:FindFirstChild('YourBase')
+                if
+                    yourBase
+                    and yourBase:IsA('BillboardGui')
+                    and yourBase.Enabled
+                then
+                    return plot
+                end
+            end
+        end
+    end
+    return nil
+end
+
+local function findEmptyPodium(base)
+    local animalPodiums = base:FindFirstChild('AnimalPodiums')
+    if not animalPodiums then
+        return nil
+    end
+
+    for _, podium in pairs(animalPodiums:GetChildren()) do
+        if podium:IsA('Model') and tonumber(podium.Name) then
+            if not spawnedPodiums[podium.Name] then
+                local podiumBase = podium:FindFirstChild('Base')
+                if podiumBase then
+                    local spawn = podiumBase:FindFirstChild('Spawn')
+                    if spawn then
+                        local attachment = spawn:FindFirstChild('Attachment')
+                        if not attachment then
+                            return podium
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+local function styleRarityLabel(targetRarity, rarity)
+    local uiGradient = targetRarity:FindFirstChild('UIGradient')
+    if uiGradient then
+        uiGradient:Destroy()
+    end
+    
+    if rarity == "OG" then
+        targetRarity.TextColor3 = Color3.fromRGB(255, 255, 0)
+    else
+        targetRarity.TextColor3 = Color3.fromRGB(255, 100, 255)
+    end
+
+    local uiStroke = targetRarity:FindFirstChild('UIStroke')
+    if uiStroke then
+        uiStroke.Color = Color3.fromRGB(0, 0, 0)
+    end
+end
+
+local function spawnAnimal(animalData)
+    local models = ReplicatedStorage:FindFirstChild('Models')
+    if not models then
+        return
+    end
+
+    local animals = models:FindFirstChild('Animals')
+    if not animals then
+        return
+    end
+
+    local selectedAnimal = animals:FindFirstChild(animalData.name)
+    if not selectedAnimal then
+        return
+    end
+
+    local base = findPlayerBase()
+    if not base then
+        return
+    end
+
+    local podium = findEmptyPodium(base)
+    if not podium then
+        return
+    end
+
+    local clonedAnimal = selectedAnimal:Clone()
+    
+    local animalHeight = 0
+    if clonedAnimal:IsA('Model') then
+        local size = clonedAnimal:GetExtentsSize()
+        animalHeight = size.Y
+    end
+
+    local podiumBase = podium:FindFirstChild('Base')
+    if podiumBase then
+        local spawn = podiumBase:FindFirstChild('Spawn')
+        if spawn then
+            clonedAnimal:PivotTo(spawn.CFrame * CFrame.new(0, -1.5, 0))
+        else
+            clonedAnimal:PivotTo(podiumBase.CFrame + Vector3.new(0, 3.5, 0))
+        end
+    end
+
+    clonedAnimal.Parent = podium
+    spawnedPodiums[podium.Name] = true
+
+    local spawn = podiumBase and podiumBase:FindFirstChild('Spawn')
+    if spawn then
+        local sourceAttachment = nil
+        local animalPodiums = base:FindFirstChild('AnimalPodiums')
+        if animalPodiums then
+            for _, otherPodium in pairs(animalPodiums:GetChildren()) do
+                if
+                    otherPodium:IsA('Model')
+                    and tonumber(otherPodium.Name)
+                    and otherPodium ~= podium
+                then
+                    local otherBase = otherPodium:FindFirstChild('Base')
+                    if otherBase then
+                        local otherSpawn = otherBase:FindFirstChild('Spawn')
+                        if otherSpawn then
+                            local otherAttachment =
+                                otherSpawn:FindFirstChild('Attachment')
+                            if otherAttachment then
+                                sourceAttachment = otherAttachment
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        if sourceAttachment then
+            local newAttachment = sourceAttachment:Clone()
+            
+            local yOffset = animalHeight > 0 and animalHeight + 1 or 4
+            newAttachment.Position = Vector3.new(0, yOffset, 0)
+
+            local animalOverhead =
+                newAttachment:FindFirstChild('AnimalOverhead')
+            if animalOverhead then
+                local displayName = animalOverhead:FindFirstChild('DisplayName')
+                if displayName then
+                    displayName.Text = animalData.name
+                end
+
+                local generation = animalOverhead:FindFirstChild('Generation')
+                if generation then
+                    generation.Text = animalData.income
+                end
+
+                local priceLabel = animalOverhead:FindFirstChild('Price')
+                if priceLabel then
+                    priceLabel.Text = animalData.cost
+                end
+
+                local rarity = animalOverhead:FindFirstChild('Rarity')
+                if rarity then
+                    rarity.Text = animalData.rarity
+                    styleRarityLabel(rarity, animalData.rarity)
+                end
+
+                local mutation = animalOverhead:FindFirstChild('Mutation')
+                if mutation then
+                    mutation.Visible = false
+                end
+            end
+
+            newAttachment.Parent = spawn
+        end
+    end
+
+    local animController = clonedAnimal:FindFirstChild('AnimationController')
+    if animController then
+        local animator = animController:FindFirstChild('Animator')
+        if animator then
+            local animFolder = clonedAnimal:FindFirstChild('Animations')
+            if animFolder then
+                local idleAnim = animFolder:FindFirstChild('Idle') or animFolder:FindFirstChild('idle')
+                if idleAnim and idleAnim:IsA('Animation') then
+                    local animTrack = animator:LoadAnimation(idleAnim)
+                    animTrack.Looped = true
+                    animTrack:Play()
+                else
+                    local firstAnim = animFolder:GetChildren()[1]
+                    if firstAnim and firstAnim:IsA('Animation') then
+                        local animTrack = animator:LoadAnimation(firstAnim)
+                        animTrack.Looped = true
+                        animTrack:Play()
+                    end
+                end
+            else
+                local animation = Instance.new('Animation')
+                animation.AnimationId = 'rbxassetid://130457563234441'
+                local animTrack = animator:LoadAnimation(animation)
+                animTrack.Looped = true
+                animTrack:Play()
+            end
+        end
+    end
+end
+
+local function makeDraggable(frame)
+    local dragging = false
+    local dragStart = nil
+    local startPos = nil
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        local newPosition = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+
+        local tweenInfo =
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween =
+            TweenService:Create(frame, tweenInfo, { Position = newPosition })
+        tween:Play()
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if
+            input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch
+        then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if
+            input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch
+        then
+            if dragging then
+                update(input)
+            end
+        end
+    end)
+
+    frame.InputEnded:Connect(function(input)
+        if
+            input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch
+        then
+            dragging = false
+        end
+    end)
+end
+
+local function createUI()
+    local screenGui = Instance.new('ScreenGui')
+    screenGui.Name = 'OGBrainrotSpawner'
+    screenGui.ResetOnSpawn = false
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.Parent = LocalPlayer:WaitForChild('PlayerGui')
+
+    -- Main Frame - Mobile Optimized
+    local mainFrame = Instance.new('Frame')
+    mainFrame.Size = UDim2.new(0.95, 0, 0.85, 0)
+    mainFrame.Position = UDim2.new(0.025, 0, 0.075, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Active = true
+    mainFrame.Parent = screenGui
+
+    local mainCorner = Instance.new('UICorner')
+    mainCorner.CornerRadius = UDim.new(0, 16)
+    mainCorner.Parent = mainFrame
+
+    -- Title Frame
+    local titleFrame = Instance.new('Frame')
+    titleFrame.Size = UDim2.new(1, 0, 0, 60)
+    titleFrame.Position = UDim2.new(0, 0, 0, 0)
+    titleFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    titleFrame.BorderSizePixel = 0
+    titleFrame.Parent = mainFrame
+
+    local titleCorner = Instance.new('UICorner')
+    titleCorner.CornerRadius = UDim.new(0, 16)
+    titleCorner.Parent = titleFrame
+
+    local titleCoverFrame = Instance.new('Frame')
+    titleCoverFrame.Size = UDim2.new(1, 0, 0, 16)
+    titleCoverFrame.Position = UDim2.new(0, 0, 1, -16)
+    titleCoverFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    titleCoverFrame.BorderSizePixel = 0
+    titleCoverFrame.Parent = titleFrame
+
+    local titleLabel = Instance.new('TextLabel')
+    titleLabel.Size = UDim2.new(0.65, 0, 1, 0)
+    titleLabel.Position = UDim2.new(0, 20, 0, 0)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Text = 'OG Brainrot Spawner'
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextSize = 22
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.Parent = titleFrame
+
+    local countLabel = Instance.new('TextLabel')
+    countLabel.Size = UDim2.new(0.35, -20, 1, 0)
+    countLabel.Position = UDim2.new(0.65, 0, 0, 0)
+    countLabel.BackgroundTransparency = 1
+    countLabel.Text = #brainrotDatabase .. ' Animals'
+    countLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
+    countLabel.Font = Enum.Font.GothamBold
+    countLabel.TextSize = 18
+    countLabel.TextXAlignment = Enum.TextXAlignment.Right
+    countLabel.Parent = titleFrame
+
+    -- Content Frame
+    local contentFrame = Instance.new('Frame')
+    contentFrame.Size = UDim2.new(1, 0, 1, -60)
+    contentFrame.Position = UDim2.new(0, 0, 0, 60)
+    contentFrame.BackgroundTransparency = 1
+    contentFrame.Parent = mainFrame
+
+    -- Scrolling Frame for animals
+    local scrollFrame = Instance.new('ScrollingFrame')
+    scrollFrame.Size = UDim2.new(1, -20, 1, -20)
+    scrollFrame.Position = UDim2.new(0, 10, 0, 10)
+    scrollFrame.BackgroundTransparency = 1
+    scrollFrame.BorderSizePixel = 0
+    scrollFrame.ScrollBarThickness = 8
+    scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 120)
+    scrollFrame.Parent = contentFrame
+
+    local listLayout = Instance.new('UIListLayout')
+    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout.Padding = UDim.new(0, 12)
+    listLayout.Parent = scrollFrame
+
+    -- Create buttons for each animal
+    for i, animalData in ipairs(brainrotDatabase) do
+        local animalButton = Instance.new('TextButton')
+        animalButton.Size = UDim2.new(1, 0, 0, 100)
+        animalButton.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+        animalButton.BorderSizePixel = 0
+        animalButton.Text = ''
+        animalButton.LayoutOrder = i
+        animalButton.AutoButtonColor = false
+        animalButton.Parent = scrollFrame
+
+        local buttonCorner = Instance.new('UICorner')
+        buttonCorner.CornerRadius = UDim.new(0, 12)
+        buttonCorner.Parent = animalButton
+
+        -- Glow effect on top
+        local glowFrame = Instance.new('Frame')
+        glowFrame.Size = UDim2.new(1, 0, 0, 3)
+        glowFrame.Position = UDim2.new(0, 0, 0, 0)
+        glowFrame.BackgroundColor3 = animalData.color
+        glowFrame.BorderSizePixel = 0
+        glowFrame.Parent = animalButton
+
+        local glowCorner = Instance.new('UICorner')
+        glowCorner.CornerRadius = UDim.new(0, 12)
+        glowCorner.Parent = glowFrame
+
+        local glowCover = Instance.new('Frame')
+        glowCover.Size = UDim2.new(1, 0, 0, 12)
+        glowCover.Position = UDim2.new(0, 0, 1, -12)
+        glowCover.BackgroundColor3 = animalData.color
+        glowCover.BorderSizePixel = 0
+        glowCover.Parent = glowFrame
+
+        -- Animal Name with fade background
+        local nameBackground = Instance.new('Frame')
+        nameBackground.Size = UDim2.new(1, -20, 0, 30)
+        nameBackground.Position = UDim2.new(0, 10, 0, 10)
+        nameBackground.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        nameBackground.BackgroundTransparency = 0.3
+        nameBackground.BorderSizePixel = 0
+        nameBackground.Parent = animalButton
+
+        local nameCorner = Instance.new('UICorner')
+        nameCorner.CornerRadius = UDim.new(0, 8)
+        nameCorner.Parent = nameBackground
+
+        local nameLabel = Instance.new('TextLabel')
+        nameLabel.Size = UDim2.new(1, -16, 1, 0)
+        nameLabel.Position = UDim2.new(0, 8, 0, 0)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Text = animalData.name
+        nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        nameLabel.Font = Enum.Font.GothamBold
+        nameLabel.TextSize = 16
+        nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+        nameLabel.TextTruncate = Enum.TextTruncate.AtEnd
+        nameLabel.Parent = nameBackground
+
+        -- Rarity Badge
+        local rarityLabel = Instance.new('TextLabel')
+        rarityLabel.Size = UDim2.new(0, 80, 0, 24)
+        rarityLabel.Position = UDim2.new(0, 10, 0, 45)
+        rarityLabel.BackgroundColor3 = animalData.rarity == "OG" and Color3.fromRGB(255, 215, 0) or Color3.fromRGB(40, 40, 50)
+        rarityLabel.BackgroundTransparency = animalData.rarity == "SECRET" and 0.3 or 0
+        rarityLabel.BorderSizePixel = 0
+        rarityLabel.Text = animalData.rarity
+        rarityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        rarityLabel.Font = Enum.Font.GothamBold
+        rarityLabel.TextSize = 14
+        rarityLabel.Parent = animalButton
+
+        local rarityCorner = Instance.new('UICorner')
+        rarityCorner.CornerRadius = UDim.new(0, 6)
+        rarityCorner.Parent = rarityLabel
+
+        local rarityStroke = Instance.new('UIStroke')
+        rarityStroke.Color = Color3.fromRGB(0, 0, 0)
+        rarityStroke.Thickness = 2
+        rarityStroke.Parent = rarityLabel
+
+        -- Income (styled like green collect button)
+        local incomeButton = Instance.new('Frame')
+        incomeButton.Size = UDim2.new(0, 160, 0, 32)
+        incomeButton.Position = UDim2.new(0, 10, 0, 72)
+        incomeButton.BackgroundColor3 = Color3.fromRGB(50, 200, 80)
+        incomeButton.BorderSizePixel = 0
+        incomeButton.Parent = animalButton
+
+        local incomeCorner = Instance.new('UICorner')
+        incomeCorner.CornerRadius = UDim.new(0, 8)
+        incomeCorner.Parent = incomeButton
+
+        local incomeStroke = Instance.new('UIStroke')
+        incomeStroke.Color = Color3.fromRGB(255, 255, 255)
+        incomeStroke.Thickness = 2
+        incomeStroke.Transparency = 0.7
+        incomeStroke.Parent = incomeButton
+
+        local incomeLabel = Instance.new('TextLabel')
+        incomeLabel.Size = UDim2.new(1, 0, 1, 0)
+        incomeLabel.BackgroundTransparency = 1
+        incomeLabel.Text = animalData.income
+        incomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        incomeLabel.Font = Enum.Font.GothamBold
+        incomeLabel.TextSize = 18
+        incomeLabel.Parent = incomeButton
+
+        -- Cost Label
+        local costLabel = Instance.new('TextLabel')
+        costLabel.Size = UDim2.new(0, 160, 0, 32)
+        costLabel.Position = UDim2.new(1, -170, 0, 72)
+        costLabel.BackgroundTransparency = 1
+        costLabel.Text = '💵 ' .. animalData.cost
+        costLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        costLabel.Font = Enum.Font.GothamBold
+        costLabel.TextSize = 18
+        costLabel.TextXAlignment = Enum.TextXAlignment.Right
+        costLabel.Parent = animalButton
+
+        -- Button interactions
+        animalButton.MouseEnter:Connect(function()
+            local tween = TweenService:Create(
+                animalButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+                { BackgroundColor3 = Color3.fromRGB(45, 45, 60) }
+            )
+            tween:Play()
+        end)
+
+        animalButton.MouseLeave:Connect(function()
+            local tween = TweenService:Create(
+                animalButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+                { BackgroundColor3 = Color3.fromRGB(35, 35, 45) }
+            )
+            tween:Play()
+        end)
+
+        animalButton.MouseButton1Click:Connect(function()
+            local shrink = TweenService:Create(
+                animalButton,
+                TweenInfo.new(0.1, Enum.EasingStyle.Quad),
+                { Size = UDim2.new(0.98, 0, 0, 95) }
+            )
+            local grow = TweenService:Create(
+                animalButton,
+                TweenInfo.new(0.1, Enum.EasingStyle.Quad),
+                { Size = UDim2.new(1, 0, 0, 100) }
+            )
+
+            shrink:Play()
+            shrink.Completed:Connect(function()
+                grow:Play()
+            end)
+
+            spawnAnimal(animalData)
+        end)
+    end
+
+    -- Update canvas size
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, (#brainrotDatabase * 100) + ((#brainrotDatabase - 1) * 12) + 20)
+
+    makeDraggable(mainFrame)
+end
+
+createUI()
